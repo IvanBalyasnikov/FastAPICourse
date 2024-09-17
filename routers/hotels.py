@@ -1,7 +1,7 @@
-from typing import List, Optional
+from typing import Annotated, List, Optional
 from fastapi import APIRouter, Depends, Query
 from schemas.hotels import SHotel, SHotelAdd, SHotelPUT, SHotelGET, SSuccess
-
+from dependencies import DHotelsPagination
 router = APIRouter(prefix="/hotels",
                    tags = ["Отели"])
 
@@ -19,9 +19,8 @@ hotels = [
 
 @router.get("")
 def get_hotels(
+    pagination:Annotated[DHotelsPagination, Depends()],
     hotel:SHotelGET = Depends(),
-    page:Optional[int] = Query(None, description="Страница"),
-    per_page:Optional[int] = Query(None, description="Сколько на странице"),
     ) -> List[SHotel]:
     global hotels
     target_hotels = []
@@ -33,12 +32,12 @@ def get_hotels(
         if hotel.name and hotel.name!= hotel_['name']:
             continue
         target_hotels.append(hotel_)
-    if page:
-        page-=1
-        if per_page:
-            target_hotels = target_hotels[page*per_page:(page+1)*per_page]
+    if pagination.page:
+        pagination.page-=1
+        if pagination.per_page:
+            target_hotels = target_hotels[pagination.page*pagination.per_page:(pagination.page+1)*pagination.per_page]
         else:
-            target_hotels = target_hotels[page*2:(page+1)*2]
+            target_hotels = target_hotels[pagination.page*2:(pagination.page+1)*2]
 
     return target_hotels
 
