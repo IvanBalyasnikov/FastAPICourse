@@ -1,7 +1,7 @@
-from typing import Annotated, List, Optional
-from fastapi import APIRouter, Depends, Query
+from typing import List
+from fastapi import APIRouter, Depends
 from schemas.hotels import SHotel, SHotelAdd, SHotelPUT, SHotelGET, SSuccess
-from dependencies import DHotelsPagination
+from dependencies import PaginationDep
 router = APIRouter(prefix="/hotels",
                    tags = ["Отели"])
 
@@ -19,7 +19,7 @@ hotels = [
 
 @router.get("")
 def get_hotels(
-    pagination:Annotated[DHotelsPagination, Depends()],
+    pagination:PaginationDep,
     hotel:SHotelGET = Depends(),
     ) -> List[SHotel]:
     global hotels
