@@ -15,7 +15,7 @@ router = APIRouter(prefix="/hotels",
 @router.post("")
 async def add_hotel(hotel:SHotelAdd = Body(openapi_examples=examples)):
     async with async_session_maker() as session:
-        hotel_model = await HotelsRepository(session).add(hotel.model_dump())
+        hotel_model = await HotelsRepository(session).add(hotel)
         await session.commit()
     return {"status":"OK", "data":hotel_model.__dict__}
 

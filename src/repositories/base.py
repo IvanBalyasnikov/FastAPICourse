@@ -1,5 +1,6 @@
 
-from sqlalchemy import insert, select
+from pydantic import BaseModel
+from sqlalchemy import insert, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 class BaseRepository():
@@ -18,7 +19,7 @@ class BaseRepository():
         result = await self.session.execute(query)
         return result.scalars().one_or_none()
     
-    async def add(self, data):
-        stmt = insert(self.model).values(**data).returning(self.model)
+    async def add(self, data:BaseModel):
+        stmt = insert(self.model).values(**data.model_dump()).returning(self.model)
         result = await self.session.execute(stmt)
         return result.scalars().one()
