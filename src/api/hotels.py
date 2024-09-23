@@ -1,5 +1,6 @@
 from typing import List, Optional
 from fastapi import APIRouter, Body, Depends, Query
+from src.repositories.hotels import HotelsRepository
 from src.schemas.hotels import SHotel, SHotelAdd
 from src.api.dependencies import PaginationDep
 from src.database import async_session_maker
@@ -14,9 +15,9 @@ router = APIRouter(prefix="/hotels",
 @router.post("")
 async def add_hotel(hotel:SHotelAdd = Body(openapi_examples=examples)):
     async with async_session_maker() as session:
-        stmt = insert(HotelsOrm).values(**hotel.model_dump())
-        await session.execute(stmt)
+        hotel_model = await HotelsRepository(session).add(hotel.model_dump())
         await session.commit()
+    return {"status":"OK", "data":hotel_model.__dict__}
 
 
 
@@ -28,18 +29,12 @@ async def get_hotels(
     ) -> List[SHotel]:
     per_page = pagination.per_page or 10
     async with async_session_maker() as session:
-        query = select(HotelsOrm)
-        if title:
-            query = query.filter(func.lower(HotelsOrm.title).like(f"%{title.lower()}%"))
-        if location:
-            query = query.filter(func.lower(HotelsOrm.location).like(f"%{location.lower()}%"))
-        query = (
-            query
-            .limit(per_page)
-            .offset(per_page * (pagination.page - 1))
-        )
-        result = await session.execute(query)
-        hotels_models = result.scalars().all()
+        hotels_models = await HotelsRepository(session).get_all(
+            title,
+            location,
+            per_page,
+            per_page * (pagination.page - 1)
+            )
     
     return [SHotel.model_validate(hotel.__dict__) for hotel in hotels_models]
 
