@@ -1,7 +1,9 @@
 from typing import List
 from fastapi import APIRouter, Depends
-from schemas.hotels import SHotel, SHotelAdd, SHotelPUT, SHotelGET, SSuccess
-from dependencies import PaginationDep
+from src.schemas.hotels import SHotel, SHotelAdd, SHotelPUT, SHotelGET, SSuccess
+from src.api.dependencies import PaginationDep
+
+
 router = APIRouter(prefix="/hotels",
                    tags = ["Отели"])
 
