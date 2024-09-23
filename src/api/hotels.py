@@ -6,14 +6,14 @@ from src.api.dependencies import PaginationDep
 from src.database import async_session_maker
 from sqlalchemy import func, insert, select
 from src.models.hotels import HotelsOrm
-from src.api.hotels_examples import examples
+from src.api.hotels_examples import add_examples, put_examples
 
 router = APIRouter(prefix="/hotels",
                    tags = ["Отели"])
 
 
 @router.post("")
-async def add_hotel(hotel:SHotelAdd = Body(openapi_examples=examples)):
+async def add_hotel(hotel:SHotelAdd = Body(openapi_examples=add_examples)):
     async with async_session_maker() as session:
         hotel_model = await HotelsRepository(session).add(hotel)
         await session.commit()
@@ -37,6 +37,21 @@ async def get_hotels(
             )
     
     return [SHotel.model_validate(hotel.__dict__) for hotel in hotels_models]
+
+
+@router.put("/{hotel_id}")
+async def edit_hotel(hotel_id:int,
+                     hotel_data:SHotelAdd = Body(openapi_examples=put_examples)):
+    async with async_session_maker() as session:
+        await HotelsRepository(session).edit(hotel_data, id = hotel_id)
+        await session.commit()
+
+
+@router.delete("/{hotel_id}")
+async def delete_hotel(hotel_id:int):
+    async with async_session_maker() as session:
+        await HotelsRepository(session).delete(id = hotel_id)
+        await session.commit()
 
     
 

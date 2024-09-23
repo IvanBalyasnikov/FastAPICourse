@@ -1,4 +1,4 @@
-examples = {
+add_examples = {
     1:{
         'description':"Добавление отеля в Сочи",
          'value':
@@ -13,6 +13,16 @@ examples = {
     },
     3:{
         'description':"Добавление отеля в Москве",
+         'value':
+         {"title": "Switch Hotel 100",
+          "location":"Москва"}
+    },
+}
+
+
+put_examples = {
+    1:{
+        'description':"Редактирование отеля",
          'value':
          {"title": "Switch Hotel 100",
           "location":"Москва"}

@@ -10,3 +10,5 @@ class SHotelAdd(BaseModel):
 class SHotel(SHotelAdd):
     id:int = Field(description="Id отеля")
 
+
+
