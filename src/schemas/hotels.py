@@ -11,4 +11,7 @@ class SHotel(SHotelAdd):
     id:int = Field(description="Id отеля")
 
 
+class SHotelPATCH(BaseModel):
+    title:Optional[str] = Field(None, description="Название отеля")
+    location:Optional[str] = Field(None, description="Адрес отеля")
 

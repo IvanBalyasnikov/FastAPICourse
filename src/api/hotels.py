@@ -1,11 +1,9 @@
 from typing import List, Optional
-from fastapi import APIRouter, Body, Depends, Query
+from fastapi import APIRouter, Body, Query
 from src.repositories.hotels import HotelsRepository
-from src.schemas.hotels import SHotel, SHotelAdd
+from src.schemas.hotels import SHotel, SHotelAdd, SHotelPATCH
 from src.api.dependencies import PaginationDep
 from src.database import async_session_maker
-from sqlalchemy import func, insert, select
-from src.models.hotels import HotelsOrm
 from src.api.hotels_examples import add_examples, put_examples
 
 router = APIRouter(prefix="/hotels",
@@ -44,6 +42,13 @@ async def edit_hotel(hotel_id:int,
                      hotel_data:SHotelAdd = Body(openapi_examples=put_examples)):
     async with async_session_maker() as session:
         await HotelsRepository(session).edit(hotel_data, id = hotel_id)
+        await session.commit()
+
+@router.patch("/{hotel_id}")
+async def update_hotel(hotel_id:int,
+                     hotel_data:SHotelPATCH = Body(openapi_examples=put_examples)):
+    async with async_session_maker() as session:
+        await HotelsRepository(session).edit(hotel_data, exclude_unset=True, id = hotel_id)
         await session.commit()
 
 
