@@ -28,21 +28,21 @@ async def get_hotels(
     ) -> List[SHotel]:
     per_page = pagination.per_page or 10
     async with async_session_maker() as session:
-        hotels_models = await HotelsRepository(session).get_all(
+        hotels = await HotelsRepository(session).get_all(
             title,
             location,
             per_page,
             per_page * (pagination.page - 1)
             )
     
-    return [SHotel.model_validate(hotel.__dict__) for hotel in hotels_models]
+    return hotels
 
 @router.get("/{hotel_id}")
 async def get_hotel(hotel_id:int) -> SHotel | None:
     async with async_session_maker() as session:
-        hotel_model = await HotelsRepository(session).get_one_or_none(id = hotel_id)
-    if hotel_model:
-        return SHotel.model_validate(hotel_model.__dict__)
+        hotel = await HotelsRepository(session).get_one_or_none(id = hotel_id)
+    if hotel:
+        return hotel
 
 @router.put("/{hotel_id}")
 async def edit_hotel(hotel_id:int,
