@@ -1,5 +1,4 @@
-from typing import Optional
-from fastapi import Body, FastAPI, Query
+from fastapi import FastAPI
 import uvicorn
 import sys
 from pathlib import Path

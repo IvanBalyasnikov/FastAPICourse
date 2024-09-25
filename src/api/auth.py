@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Body, Query
+from fastapi import APIRouter, Body
 from src.repositories.users import UsersRepository
 from src.schemas.users import SUserAdd, SUserRequestAdd
 from src.database import async_session_maker
